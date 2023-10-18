@@ -1,0 +1,27 @@
+#!/bin/sh
+
+PHP_FPM_PID=
+NGINX_PID=
+
+export XDEBUG_CONFIG='start_with_request=yes'
+
+quit() {
+    kill -QUIT $NGINX_PID
+    kill -QUIT $PHP_FPM_PID
+}
+
+nginx -c "/app/ops/nginx/dev.conf" -t || exit 1
+php-fpm &
+PHP_FPM_PID=$!
+nginx -c "/app/ops/nginx/dev.conf" -g "daemon off;" &
+NGINX_PID=$!
+
+
+/app/bin/console cache:clear
+chown -R www-data:www-data /app
+
+#supervisord
+
+trap quit QUIT
+wait
+

@@ -1,0 +1,5 @@
+code/embedding/*.json
+code/backend/.env.test
+code/backend/nginx.pid
+code/backend/php-fpm.pid
+.idea

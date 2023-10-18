@@ -1,0 +1,40 @@
+version: "3.6"
+
+services:
+
+  back:
+    environment:
+      - APP_ENV=dev
+      - OPENAI_API_KEY=somekey
+      - MONGO_DB_USER=root
+      - MONGO_DB_PASSWORD=verysecretpass
+      - MONGO_DB_HOST=mongo
+      - MONGO_DB_PORT=27017
+      - MONGO_DB_DATABASE=ai-resume
+    ports:
+      - "8080:8000"
+    networks:
+      - ai-resume
+
+  mongo:
+    ports:
+      - "27017:27017"
+    networks:
+      - ai-resume
+
+  mongo-express:
+    ports:
+      - "8888:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: verysecretpass
+      ME_CONFIG_MONGODB_URL: mongodb://root:verysecretpass@mongo:27017/
+    networks:
+      - ai-resume
+
+  vue:
+    ports:
+      - "5173:5173"
+
+networks:
+    ai-resume:

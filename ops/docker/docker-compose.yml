@@ -1,0 +1,44 @@
+version: "3.6"
+
+services:
+
+  back:
+    tty: true
+    build:
+      context: ../../code/backend
+      dockerfile: ../../ops/docker/backend/dev/Dockerfile
+    volumes:
+      - ../../code/backend:/app
+      - ../../ops:/ops
+      - back-vendor:/back/vendor
+    restart: on-failure
+
+  mongo:
+    image: mongo:4.2.24-bionic
+    restart: always
+    volumes:
+      - mongo_db:/data/db
+    healthcheck:
+      test: mongo --eval "print(\"waited for connection\")"
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  mongo-express:
+    image: mongo-express:0.54
+    restart: always
+
+
+  vue:
+     build:
+       context: ../../code/frontend
+       dockerfile: ../../ops/docker/front/dev/Dockerfile
+     tty: true
+     volumes:
+       - ../../code/frontend:/app
+       - /app/node_modules
+     restart: always
+
+volumes:
+  back-vendor:
+  mongo_db:
